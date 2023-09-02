@@ -5,10 +5,10 @@ require('dotenv').config();
 const router = require('./src/api.router');
 const config = require('./config/config');
 const { NotFound } = require('./errors/ApiError');
-const Actor = require("./db/Actor");
-const Movie = require("./db/Movie");
-const User = require("./db/Movie");
-const MoviesActors = require("./db/MoviesActors");
+const Actor = require('./db/Actor');
+const Movie = require('./db/Movie');
+const User = require('./db/Movie');
+const MoviesActors = require('./db/MoviesActors');
 
 const app = express();
 
