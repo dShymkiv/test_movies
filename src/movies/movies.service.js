@@ -4,8 +4,8 @@ const MoviesActors = require('../../db/MoviesActors');
 const { NotFound } = require("../../errors/ApiError");
 const { buildFilterQuery, buildSortQuery } = require("./movies.utils");
 
-const findMovieById = async (movieId) => {
-  return await Movie.findOne({
+const findMovieById = (movieId) => {
+  return Movie.findOne({
     where: { id: movieId },
     include: {
       model: Actor,
@@ -17,7 +17,6 @@ const findMovieById = async (movieId) => {
 };
 
 const addMovie = async (movie) => {
-
   const newMovie = await Movie.create({
     ...movie,
   });
