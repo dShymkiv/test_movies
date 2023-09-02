@@ -1,10 +1,3 @@
-const { Op } = require('sequelize');
-
-const Movie = require('../../db/Movie');
-const Actor = require('../../db/Actor');
-const MoviesActors = require('../../db/MoviesActors');
-const { TITLE, ACTOR } = require("../../config/enum/filterFields");
-
 const buildFilterQuery = async (query = {}) => {
   //todo: add search
   if(query.actor) {

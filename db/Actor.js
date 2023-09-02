@@ -9,17 +9,4 @@ const Actor = sequelize.define('actor', {
   },
 });
 
-// class Actor extends Model {}
-//
-// Actor.init({
-//   name: {
-//     type: DataTypes.STRING,
-//     allowNull: false,
-//     unique: true,
-//   },
-// }, {
-//   sequelize,
-//   modelName: 'actor'
-// });
-
 module.exports = Actor;

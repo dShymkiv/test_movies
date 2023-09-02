@@ -5,7 +5,6 @@ const userService = require("../users/users.service");
 
 const validateAccessToken = async (req, res, next) => {
   try {
-    // for getting token from headers use .get()
     const accessToken = req.get(config.AUTHORIZATION);
 
     if (!accessToken) {

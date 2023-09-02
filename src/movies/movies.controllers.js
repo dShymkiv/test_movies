@@ -73,9 +73,10 @@ const importMovies = async (req, res, next) => {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    await movieService.importMovie(file);
+    const data = await movieService.importMovie(file);
 
     res.status(200).json({
+      ...data,
       status: 1
     });
   } catch (e) {

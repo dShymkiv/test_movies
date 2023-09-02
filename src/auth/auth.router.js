@@ -5,7 +5,7 @@ const { validate } = require('../mainValidator');
 const schema = require('./auth.schema');
 
 authRouter.post('/',
-  // validate(schema.loginUserSchema),
+  validate(schema.loginUserSchema),
   authController.loginUser
 );
 

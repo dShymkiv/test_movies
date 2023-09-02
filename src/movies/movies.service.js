@@ -1,17 +1,16 @@
 const Movie = require('../../db/Movie');
 const Actor = require('../../db/Actor');
 const MoviesActors = require('../../db/MoviesActors');
-const {NotFound} = require("../../errors/ApiError");
-const { buildFilterQuery, buildSortQuery} = require("./movies.utils");
-const {Op} = require("sequelize");
+const { NotFound } = require("../../errors/ApiError");
+const { buildFilterQuery, buildSortQuery } = require("./movies.utils");
 
 const findMovieById = async (movieId) => {
   return await Movie.findOne({
-    where: {id: movieId},
+    where: { id: movieId },
     include: {
       model: Actor,
       attributes: ['id', 'name'],
-      through: {attributes: []}
+      through: { attributes: [] }
     },
     attributes: ['id', 'title', 'year', 'format']
   })
@@ -83,29 +82,44 @@ const showMovieById = async (movieId) => {
   };
 };
 
+const properties = {
+  'Title': 'title',
+  'Release Year': 'year',
+  'Format': 'format',
+  'Stars': 'actors'
+};
+
 const importMovie = async (file) => {
   const content = file.buffer.toString();
-  const moviesData = content.split('\n\n');
+  const moviesData = content
+    .split('\n\n')
+    .filter(d => d);
 
   const addedMovies = [];
 
   for (const movieText of moviesData) {
     const movieInfo = {};
     const lines = movieText.split('\n');
+
     for (const line of lines) {
       const [key, value] = line.split(': ');
-      movieInfo[key] = value;
+      movieInfo[properties[key]] = value;
     }
 
-    const actors = movieInfo['Stars'].split(', ');
+    const actors = movieInfo['actors'].split(', ');
 
-    const movie = addMovie({...movieInfo, actors});
-    addedMovies.push(movie.dataValues);
+    const movie = await addMovie({...movieInfo, actors});
+    addedMovies.push({
+      id: movie.id, title: movie.title, year: movie.year, format: movie.format
+    });
   }
 
   return {
     data: addedMovies,
-    total: addedMovies.length
+    meta: {
+      imported: addedMovies.length,
+      total: moviesData.length
+    }
   };
 };
 
@@ -118,7 +132,7 @@ const getMovies = async (query = {}) => {
       {
         model: Actor,
         attributes: [],
-        where: { },
+        where: {},
         through: {
           attributes: [],
         },

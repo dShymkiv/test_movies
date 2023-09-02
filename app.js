@@ -1,12 +1,13 @@
 const express = require('express');
 
 require('dotenv').config();
-const sequelize = require('./db');
+
 const router = require('./src/api.router');
 const config = require('./config/config');
 const { NotFound } = require('./errors/ApiError');
 const Actor = require("./db/Actor");
 const Movie = require("./db/Movie");
+const User = require("./db/Movie");
 const MoviesActors = require("./db/MoviesActors");
 
 const app = express();
@@ -54,18 +55,14 @@ app.listen(config.PORT, async () => {
     await Actor.sync({force: true});
     await Movie.sync({force: true});
     await MoviesActors.sync({force: true});
-    // const connection = sequelize.sync({force: true});
-
-    // if (!connection) {
-    //   console.log('something wrong');
-    // }
+    await User.sync({force: false});
 
   } catch (err) {
     if (err) console.log(err);
 
     process.exit(1);
   }
-  console.log(`PORT: ${config.PORT}`);
+  console.log(`PORT: ${ config.PORT }`);
 });
 
 function _notFoundError(req, res, next) {

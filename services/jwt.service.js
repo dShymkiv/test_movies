@@ -15,9 +15,7 @@ const checkPasswords = async (hashedPassword, password) => {
 };
 
 const generateAccessToken = (encodeData = {}) => {
-  const accessToken = jwt.sign({ encodeData }, config.ACCESS_TOKEN_SECRET, {expiresIn: "15m"});
-
-  return accessToken;
+  return jwt.sign({ encodeData }, config.ACCESS_TOKEN_SECRET, {expiresIn: "15m"});
 };
 
 const validateToken = (token = '') => {
@@ -26,7 +24,6 @@ const validateToken = (token = '') => {
     return jwt.verify(token, config.ACCESS_TOKEN_SECRET);
   } catch (e) {
     throw new Unauthorized(e.message || 'Invalid token');
-    // for not valid token throw only 401 Error -> UNAUTHORIZED
   }
 };
 

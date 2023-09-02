@@ -1,11 +1,8 @@
-const { DataTypes, Model } = require('sequelize');
+const { DataTypes } = require('sequelize');
 
 const sequelize = require('../db')
 
-class User extends Model {}
-
-// TODO: make define
-User.init({
+const User = sequelize.define('user', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -19,9 +16,6 @@ User.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
-}, {
-  sequelize,
-  modelName: 'User'
 });
 
 module.exports = User;

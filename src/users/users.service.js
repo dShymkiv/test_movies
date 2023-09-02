@@ -1,4 +1,4 @@
-const User = require("../../db/User");
+const User = require('../../db/User');
 const jwtService = require('../../services/jwt.service');
 
 const createUser = async (user) => {
