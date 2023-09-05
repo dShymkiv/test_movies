@@ -11,13 +11,9 @@ const checkUserPasswordMdlwr = wrapError(async (req, res, next) => {
 });
 
 const checkUserUniqueMdlwr = wrapError(async (req, res, next) => {
-  const user = findUserByEmail(req.body.email);
+  const user = await findUserByEmail(req.body.email);
 
-  if (!user) {
-    throw new BadRequest("User with requested email was not found");
-  }
-
-  if (req.body.email === user.email) {
+  if (user) {
     throw new BadRequest("User with current email already exists");
   }
 
