@@ -12,7 +12,7 @@
 #### Running with Docker:
 - Required installation: docker.
 - Docker Hub image: `https://hub.docker.com/layers/dshymkiv/test_movies/latest/images/sha256:d2402ed7c87411e77c3196ebd6bea415c5ad07541d447834e3ef6aa3d53713b0`
-- To build Docker image: `docker build -t dshymkiv/test_movies`.
+- To build Docker image: `docker build -t dshymkiv/test_movies .`.
 - To run Docker image on Docker container: `docker run --name movies --rm -d -p 5001:5002 -e APP_PORT=5002 dshymkiv/test_movies`.
 - Port: `5001`
 - Staging Domain: `localhost:5001`
