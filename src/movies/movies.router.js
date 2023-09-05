@@ -3,6 +3,7 @@ const multer = require('multer');
 
 const movieController = require('./movies.controllers');
 const authMdlwr = require('../auth/auth.middleware');
+const movieMdlwr = require('./movies.middleware');
 const { validate } = require('../mainValidator');
 const schema = require('./movies.schema');
 const authSchema = require('../auth/auth.schema');
@@ -16,6 +17,8 @@ movieRouter.use('/',
 );
 movieRouter.post('/',
   validate(schema.addOrUpdateMovieSchema),
+  movieMdlwr.checkUniqueTitleMdlwr,
+  movieMdlwr.checkMovieYearMdlwr,
   movieController.addMovie
 );
 movieRouter.get('/',
@@ -25,7 +28,6 @@ movieRouter.get('/',
 
 movieRouter.post('/import',
   upload.single('file'),
-  // validate(schema.createUserSchema),
   authMdlwr.validateAccessToken,
   movieController.importMovies
 );
@@ -39,6 +41,8 @@ movieRouter.delete('/:movieId',
 );
 movieRouter.patch('/:movieId',
   validate(schema.addOrUpdateMovieSchema),
+  movieMdlwr.checkUniqueTitleMdlwr,
+  movieMdlwr.checkMovieYearMdlwr,
   movieController.updateMovie
 );
 movieRouter.get('/:movieId',

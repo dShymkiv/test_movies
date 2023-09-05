@@ -1,19 +1,19 @@
 const Movie = require('../../db/Movie');
 const Actor = require('../../db/Actor');
 const MoviesActors = require('../../db/MoviesActors');
-const { NotFound } = require("../../errors/ApiError");
-const { buildFilterQuery, buildSortQuery } = require("./movies.utils");
+const { NotFound } = require('../../errors/ApiError');
+const { buildFilterQuery, buildSortQuery } = require('./movies.utils');
 
-const findMovieById = (movieId) => {
+const findMovieByParam = (param, value) => {
   return Movie.findOne({
-    where: { id: movieId },
+    where: { [param]: [value] },
     include: {
       model: Actor,
       attributes: ['id', 'name'],
       through: { attributes: [] }
     },
     attributes: ['id', 'title', 'year', 'format']
-  })
+  });
 };
 
 const addMovie = async (movie) => {
@@ -28,14 +28,14 @@ const addMovie = async (movie) => {
     await newMovie.addActor(actor);
   }
 
-  const result = await findMovieById(newMovie.id)
+  const result = await findMovieByParam('id', newMovie.id);
 
-  return {...result.dataValues}
+  return {...result.dataValues};
 };
 
 const deleteMovie = async (movieId) => {
   await MoviesActors.destroy({
-    where: { MovieId: movieId }
+    where: { movie_id: movieId }
   });
   await Movie.destroy({
     where: { id: movieId }
@@ -43,7 +43,7 @@ const deleteMovie = async (movieId) => {
 };
 
 const updateMovie = async (movieId, fieldsToChange) => {
-  const movie = await findMovieById(movieId);
+  const movie = await findMovieByParam('id', movieId);
 
   if (!movie) {
     throw new NotFound('Movie not found');
@@ -66,7 +66,7 @@ const updateMovie = async (movieId, fieldsToChange) => {
     await movie.addActor(actor);
   }
 
-  const result = await findMovieById(movieId);
+  const result = await findMovieByParam('id', movieId);
 
   return {
     ...result.dataValues,
@@ -74,7 +74,7 @@ const updateMovie = async (movieId, fieldsToChange) => {
 };
 
 const showMovieById = async (movieId) => {
-  const movie = await findMovieById(movieId);
+  const movie = await findMovieByParam('id', movieId);
 
   return {
     ...movie.dataValues,
@@ -88,13 +88,13 @@ const properties = {
   'Stars': 'actors'
 };
 
-const importMovie = async (file) => {
+const parseDataFromFile = async (file) => {
   const content = file.buffer.toString();
   const moviesData = content
     .split('\n\n')
     .filter(d => d);
 
-  const addedMovies = [];
+  const moviesToAdd = [];
 
   for (const movieText of moviesData) {
     const movieInfo = {};
@@ -107,17 +107,36 @@ const importMovie = async (file) => {
 
     const actors = movieInfo['actors'].split(', ');
 
-    const movie = await addMovie({...movieInfo, actors});
+    moviesToAdd.push({...movieInfo, actors});
+  }
+
+    return moviesToAdd;
+};
+
+const importMovie = async (file) => {
+  const moviesToAdd = await parseDataFromFile(file);
+  const addedMovies = [];
+
+  for (const movie of moviesToAdd) {
+    const uniqueMovie = await findMovieByParam('title', movie.title);
+
+    if (uniqueMovie) {
+      continue;
+    }
+
+    const importedMovie = await addMovie(movie);
     addedMovies.push({
-      id: movie.id, title: movie.title, year: movie.year, format: movie.format
+      id: importedMovie.id, title: importedMovie.title, year: importedMovie.year, format: importedMovie.format
     });
   }
+
+  const { count: totalInSystem  } = await Movie.findAndCountAll();
 
   return {
     data: addedMovies,
     meta: {
       imported: addedMovies.length,
-      total: moviesData.length
+      total: totalInSystem
     }
   };
 };
@@ -162,5 +181,6 @@ module.exports = {
   updateMovie,
   showMovieById,
   getMovies,
-  importMovie
+  importMovie,
+  findMovieByParam
 };

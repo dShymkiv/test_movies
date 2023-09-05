@@ -7,6 +7,7 @@ const { validate } = require('../mainValidator');
 
 userRouter.post('/',
   validate(schema.createUserSchema),
+  userMdlwr.checkUserUniqueMdlwr,
   userMdlwr.checkUserPasswordMdlwr,
   userController.createUser,
 );

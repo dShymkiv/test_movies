@@ -2,12 +2,13 @@ const Joi = require('joi');
 
 const movieFormat = require('../../config/enum/movieFormat');
 const { ID, TITLE, YEAR } = require('../../config/enum/sortFields');
+const regExp = require('../../config/enum/regexp');
 const { ASC, DESC } = require('../../config/enum/sortOrder');
 
 const addOrUpdateMovieSchema = {
   body: Joi.object().keys({
-    title: Joi.string().alphanum().trim().required().error(new Error("'title' is not valid")),
-    year: Joi.number().required().error(new Error("Please enter valid data")),
+    title: Joi.string().pattern(regExp.TITLE).trim().required().error(new Error("'title' is not valid")),
+    year: Joi.number().required().error(new Error("Please enter valid year data. Year must be from 1850 to 2023")),
     format: Joi.string().valid(movieFormat.DVD, movieFormat.VHS, movieFormat.BLU_RAY).required().error(new Error("Please enter valid data")),
     actors: Joi.array().items(Joi.string()).min(1).required().error(new Error("Please enter valid data")),
   })

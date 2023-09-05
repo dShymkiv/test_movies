@@ -15,7 +15,7 @@ const checkPasswords = async (hashedPassword, password) => {
 };
 
 const generateAccessToken = (encodeData = {}) => {
-  return jwt.sign({ encodeData }, config.ACCESS_TOKEN_SECRET, {expiresIn: "15m"});
+  return jwt.sign({ encodeData }, config.ACCESS_TOKEN_SECRET, {expiresIn: "1h"});
 };
 
 const validateToken = (token = '') => {
